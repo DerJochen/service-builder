@@ -41,4 +41,16 @@ public class ServiceBuilder {
 		}
 	}
 
+	protected static <S> S create(Class<S> serviceClass) {
+		if (serviceClass == null) {
+			throw new IllegalStateException("No service class set");
+		}
+		try {
+			S service = serviceClass.newInstance();
+			return service;
+		} catch (InstantiationException | IllegalAccessException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 }
