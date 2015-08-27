@@ -36,13 +36,15 @@ public class ClasspathUtil {
 	 * @throws URISyntaxException
 	 * @throws ClassNotFoundException
 	 */
-	public static <T> ArrayList<Class<? extends T>> findImplementations(String packageName, Class<T> toLookFor, ClassLoader classLoader)
+	public static <T> ArrayList<Class<? extends T>> findImplementations(String packageName, Class<T> parentType, ClassLoader classLoader)
 			throws IOException, URISyntaxException, ClassNotFoundException {
 		ArrayList<String> names = new ArrayList<String>();
 
 		packageName = packageName.replace(".", "/");
 		URL packageURL = classLoader.getResource(packageName);
 
+		// TODO filter by 'parentType'
+		// TODO add tree search or recursion to descend in child packages
 		if (packageURL.getProtocol().equals("jar")) {
 			String jarFileName;
 			Enumeration<JarEntry> jarEntries;
@@ -79,8 +81,8 @@ public class ClasspathUtil {
 		ArrayList<Class<? extends T>> implementations = new ArrayList<>();
 		for (String name : names) {
 			Class<?> potentialImplementation = classLoader.loadClass(name);
-			if (toLookFor.isAssignableFrom(potentialImplementation)) {
-				Class<? extends T> implementation = potentialImplementation.asSubclass(toLookFor);
+			if (parentType.isAssignableFrom(potentialImplementation)) {
+				Class<? extends T> implementation = potentialImplementation.asSubclass(parentType);
 				implementations.add(implementation);
 			}
 		}
