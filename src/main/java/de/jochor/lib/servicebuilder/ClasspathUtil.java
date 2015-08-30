@@ -2,6 +2,7 @@ package de.jochor.lib.servicebuilder;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -40,54 +41,72 @@ public class ClasspathUtil {
 			throws IOException, URISyntaxException, ClassNotFoundException {
 		ArrayList<String> names = new ArrayList<String>();
 
-		packageName = packageName.replace(".", "/");
-		URL packageURL = classLoader.getResource(packageName);
+		String packagePathName = packageName.replace(".", "/");
+		Enumeration<URL> packageURLs = classLoader.getResources(packagePathName);
 
-		// TODO filter by 'parentType'
-		// TODO add tree search or recursion to descend in child packages
-		if (packageURL.getProtocol().equals("jar")) {
-			String jarFileName;
-			Enumeration<JarEntry> jarEntries;
-			String entryName;
-
-			// build jar file name, then loop through zipped entries
-			jarFileName = URLDecoder.decode(packageURL.getFile(), StandardCharsets.UTF_8.name());
-			jarFileName = jarFileName.substring(5, jarFileName.indexOf("!"));
-			try (JarFile jf = new JarFile(jarFileName)) {
-				jarEntries = jf.entries();
-				while (jarEntries.hasMoreElements()) {
-					entryName = jarEntries.nextElement().getName();
-					if (entryName.startsWith(packageName) && entryName.length() > packageName.length() + 5) {
-						entryName = entryName.substring(packageName.length(), entryName.lastIndexOf('.'));
-						names.add(entryName);
-					}
-				}
-			}
-		} else {
-			URI uri = new URI(packageURL.toString());
-			File folder = new File(uri.getPath());
-			// won't work with path which contains blank (%20)
-			// File folder = new File(packageURL.getFile());
-			File[] contenuti = folder.listFiles();
-			String entryName;
-			for (File actual : contenuti) {
-				entryName = actual.getName();
-				int lastDot = entryName.lastIndexOf('.');
-				entryName = entryName.substring(0, lastDot);
-				names.add(entryName);
+		// TODO test for jar files
+		// TODO works for folders. to be on the save side, add a test.
+		while (packageURLs.hasMoreElements()) {
+			URL packageURL = packageURLs.nextElement();
+			if (packageURL.getProtocol().equals("jar")) {
+				scanArchive(packageURL, packageName, names);
+			} else {
+				scanFolders(packageURL, packageName, names);
 			}
 		}
 
 		ArrayList<Class<? extends T>> implementations = new ArrayList<>();
 		for (String name : names) {
 			Class<?> potentialImplementation = classLoader.loadClass(name);
-			if (parentType.isAssignableFrom(potentialImplementation)) {
+			if (!potentialImplementation.isInterface() && parentType.isAssignableFrom(potentialImplementation)) {
 				Class<? extends T> implementation = potentialImplementation.asSubclass(parentType);
 				implementations.add(implementation);
 			}
 		}
 
 		return implementations;
+	}
+
+	public static void scanFolders(URL packageURL, String packageName, ArrayList<String> names) throws URISyntaxException {
+		URI uri = new URI(packageURL.toString());
+		File folder = new File(uri.getPath());
+		scanFolder(folder, packageName, names);
+	}
+
+	public static void scanFolder(File folder, String packageName, ArrayList<String> names) {
+		File[] contenuti = folder.listFiles();
+		String entryName;
+		for (File actual : contenuti) {
+			if (actual.isFile()) {
+				entryName = actual.getName();
+				int lastDot = entryName.lastIndexOf('.');
+				entryName = entryName.substring(0, lastDot);
+				String fqClassName = packageName + "." + entryName;
+				names.add(fqClassName);
+			} else if (actual.isDirectory()) {
+				scanFolder(actual, packageName + "." + actual.getName(), names);
+			}
+		}
+	}
+
+	public static void scanArchive(URL packageURL, String packageName, ArrayList<String> names) throws UnsupportedEncodingException, IOException {
+		String jarFileName;
+		Enumeration<JarEntry> jarEntries;
+		String entryName;
+
+		// build jar file name, then loop through zipped entries
+		jarFileName = URLDecoder.decode(packageURL.getFile(), StandardCharsets.UTF_8.name());
+		jarFileName = jarFileName.substring(5, jarFileName.indexOf("!"));
+		try (JarFile jf = new JarFile(jarFileName)) {
+			jarEntries = jf.entries();
+			while (jarEntries.hasMoreElements()) {
+				entryName = jarEntries.nextElement().getName();
+				if (entryName.startsWith(packageName) && entryName.length() > packageName.length() + 5) {
+					entryName = entryName.substring(packageName.length(), entryName.lastIndexOf('.'));
+					names.add(entryName);
+				}
+			}
+		}
 	}
 
 }
