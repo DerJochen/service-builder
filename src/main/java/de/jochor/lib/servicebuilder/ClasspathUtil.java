@@ -44,12 +44,11 @@ public class ClasspathUtil {
 		String packagePathName = packageName.replace(".", "/");
 		Enumeration<URL> packageURLs = classLoader.getResources(packagePathName);
 
-		// TODO test for jar files
 		// TODO works for folders. to be on the save side, add a test.
 		while (packageURLs.hasMoreElements()) {
 			URL packageURL = packageURLs.nextElement();
 			if (packageURL.getProtocol().equals("jar")) {
-				scanArchive(packageURL, packageName, names);
+				scanArchive(packageURL, packageName, packagePathName, names);
 			} else {
 				scanFolders(packageURL, packageName, names);
 			}
@@ -89,10 +88,12 @@ public class ClasspathUtil {
 		}
 	}
 
-	public static void scanArchive(URL packageURL, String packageName, ArrayList<String> names) throws UnsupportedEncodingException, IOException {
+	public static void scanArchive(URL packageURL, String packageName, String packagePathName, ArrayList<String> names)
+			throws UnsupportedEncodingException, IOException {
 		String jarFileName;
 		Enumeration<JarEntry> jarEntries;
 		String entryName;
+		String packagePathNamePlusSlash = packagePathName + "/";
 
 		// build jar file name, then loop through zipped entries
 		jarFileName = URLDecoder.decode(packageURL.getFile(), StandardCharsets.UTF_8.name());
@@ -100,9 +101,15 @@ public class ClasspathUtil {
 		try (JarFile jf = new JarFile(jarFileName)) {
 			jarEntries = jf.entries();
 			while (jarEntries.hasMoreElements()) {
-				entryName = jarEntries.nextElement().getName();
-				if (entryName.startsWith(packageName) && entryName.length() > packageName.length() + 5) {
-					entryName = entryName.substring(packageName.length(), entryName.lastIndexOf('.'));
+				JarEntry jarEntry = jarEntries.nextElement();
+				if (jarEntry.isDirectory()) {
+					continue;
+				}
+
+				entryName = jarEntry.getName();
+				if (entryName.startsWith(packagePathNamePlusSlash) && entryName.endsWith(".class") && !entryName.contains("$")) {
+					entryName = entryName.substring(0, entryName.lastIndexOf('.'));
+					entryName = entryName.replace("/", ".");
 					names.add(entryName);
 				}
 			}
