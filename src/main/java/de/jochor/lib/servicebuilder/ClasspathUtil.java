@@ -10,6 +10,7 @@ import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
@@ -39,12 +40,11 @@ public class ClasspathUtil {
 	 */
 	public static <T> ArrayList<Class<? extends T>> findImplementations(String packageName, Class<T> parentType, ClassLoader classLoader)
 			throws IOException, URISyntaxException, ClassNotFoundException {
-		ArrayList<String> names = new ArrayList<String>();
+		HashSet<String> names = new HashSet<String>();
 
 		String packagePathName = packageName.replace(".", "/");
 		Enumeration<URL> packageURLs = classLoader.getResources(packagePathName);
 
-		// TODO works for folders. to be on the save side, add a test.
 		while (packageURLs.hasMoreElements()) {
 			URL packageURL = packageURLs.nextElement();
 			if (packageURL.getProtocol().equals("jar")) {
@@ -66,13 +66,13 @@ public class ClasspathUtil {
 		return implementations;
 	}
 
-	public static void scanFolders(URL packageURL, String packageName, ArrayList<String> names) throws URISyntaxException {
+	public static void scanFolders(URL packageURL, String packageName, HashSet<String> names) throws URISyntaxException {
 		URI uri = new URI(packageURL.toString());
 		File folder = new File(uri.getPath());
 		scanFolder(folder, packageName, names);
 	}
 
-	public static void scanFolder(File folder, String packageName, ArrayList<String> names) {
+	public static void scanFolder(File folder, String packageName, HashSet<String> names) {
 		File[] contenuti = folder.listFiles();
 		String entryName;
 		for (File actual : contenuti) {
@@ -88,7 +88,7 @@ public class ClasspathUtil {
 		}
 	}
 
-	public static void scanArchive(URL packageURL, String packageName, String packagePathName, ArrayList<String> names)
+	public static void scanArchive(URL packageURL, String packageName, String packagePathName, HashSet<String> names)
 			throws UnsupportedEncodingException, IOException {
 		String jarFileName;
 		Enumeration<JarEntry> jarEntries;
