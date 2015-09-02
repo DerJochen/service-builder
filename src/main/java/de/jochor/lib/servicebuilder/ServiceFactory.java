@@ -58,9 +58,20 @@ public class ServiceFactory {
 		return fqClassName;
 	}
 
-	private static void reportMultipleBinders(LinkedHashSet<URL> resourceSet) {
-		// TODO Auto-generated method stub
+	private static void reportMultipleBinders(LinkedHashSet<URL> resourceSet)
+	{
+		if (resourceSet.size() <= 1)
+		{
+			return;
+		}
 
+		System.out.println("Multiple static binders found:");
+		Iterator<URL> iter = resourceSet.iterator();
+		while (iter.hasNext())
+		{
+			URL url = iter.next();
+			System.out.println(url.toString());
+		}
 	}
 
 }
