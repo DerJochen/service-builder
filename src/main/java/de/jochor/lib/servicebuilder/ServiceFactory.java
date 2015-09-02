@@ -5,6 +5,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 
 /**
@@ -58,17 +59,14 @@ public class ServiceFactory {
 		return fqClassName;
 	}
 
-	private static void reportMultipleBinders(LinkedHashSet<URL> resourceSet)
-	{
-		if (resourceSet.size() <= 1)
-		{
+	private static void reportMultipleBinders(LinkedHashSet<URL> resourceSet) {
+		if (resourceSet.size() <= 1) {
 			return;
 		}
 
 		System.out.println("Multiple static binders found:");
 		Iterator<URL> iter = resourceSet.iterator();
-		while (iter.hasNext())
-		{
+		while (iter.hasNext()) {
 			URL url = iter.next();
 			System.out.println(url.toString());
 		}
