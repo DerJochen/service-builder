@@ -13,7 +13,7 @@ public class ServiceFactoryTest {
 
 	private static final String BINDER_NAME = "de/jochor/test/TestServiceBinder.class";
 
-	private static final File BINDER_FILE = new File("target/classes", BINDER_NAME);
+	private static final File BINDER_FILE = new File("target/test-classes", BINDER_NAME);
 
 	@Test
 	public void testFindPossibleBinders() throws Throwable {
