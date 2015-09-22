@@ -2,15 +2,15 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>de.jochor.lib.builder</groupId>
-	<artifactId>service-builder</artifactId>
+	<groupId>de.jochor.lib.servicefactory</groupId>
+	<artifactId>service-factory</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<!-- Type 0 -->
 
 	<parent>
 		<groupId>de.jochor.maven</groupId>
-		<artifactId>super-pom</artifactId>
-		<version>0.2.0</version>
+		<artifactId>public-super-pom</artifactId>
+		<version>0.1.0</version>
 	</parent>
 
 	<dependencies>
@@ -41,9 +41,10 @@
 	</dependencyManagement>
 
 	<repositories>
+		<!-- Source of the parent pom -->
 		<repository>
-			<id>maven2-repository.jochor.de</id>
-			<url>http://maven.jochor.de/content/repositories/releases/</url>
+			<id>jochor-public-releases</id>
+			<url>http://maven.jochor.de/content/repositories/public-releases/</url>
 		</repository>
 	</repositories>
 

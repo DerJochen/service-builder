@@ -1,4 +1,4 @@
-package de.jochor.lib.servicebuilder;
+package de.jochor.lib.servicefactory;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;

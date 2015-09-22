@@ -1,4 +1,4 @@
-package de.jochor.lib.servicebuilder;
+package de.jochor.lib.servicefactory;
 
 import java.io.File;
 import java.net.URL;
@@ -7,6 +7,7 @@ import java.util.LinkedHashSet;
 import org.junit.Assert;
 import org.junit.Test;
 
+import de.jochor.lib.servicefactory.ServiceFactory;
 import de.jochor.test.TestService;
 
 public class ServiceFactoryTest {
