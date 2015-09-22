@@ -10,8 +10,11 @@ import java.util.LinkedHashSet;
 
 /**
  *
+ * <p>
+ * <b>Started:</b> 2015-08-27
+ * </p>
+ * 
  * @author Jochen Hormes
- * @start 2015-08-27
  *
  */
 public class ServiceFactory {
