@@ -1,4 +1,4 @@
-# service-builder
+# service-factory
 Base project for the different service abstraction layer projects.
 
 ## Maven
