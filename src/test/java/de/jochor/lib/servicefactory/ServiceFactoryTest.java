@@ -5,9 +5,9 @@ import java.net.URL;
 import java.util.LinkedHashSet;
 
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
-import de.jochor.lib.servicefactory.ServiceFactory;
 import de.jochor.test.TestService;
 
 public class ServiceFactoryTest {
@@ -15,6 +15,11 @@ public class ServiceFactoryTest {
 	private static final String BINDER_NAME = "de/jochor/test/TestServiceBinder.class";
 
 	private static final File BINDER_FILE = new File("target/test-classes", BINDER_NAME);
+
+	@BeforeClass
+	public static void setUpBeforeClass() {
+		System.setProperty("jochor.servicefactory.silence", "true");
+	}
 
 	@Test
 	public void testFindPossibleBinders() throws Throwable {
