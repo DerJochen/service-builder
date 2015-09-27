@@ -15,9 +15,20 @@ Base project for the different service abstraction layer projects.
 
 ### Repository Tag
 
+#### Releases
+
 ```xml
 <repository>
 	<id>jochor-public-releases</id>
 	<url>http://maven.jochor.de/content/repositories/public-releases/</url>
+</repository>
+```
+
+#### Snapshots
+
+```xml
+<repository>
+	<id>jochor-public-releases</id>
+	<url>http://maven.jochor.de/content/repositories/public-snapshots/</url>
 </repository>
 ```

@@ -21,7 +21,7 @@ import java.util.LinkedHashSet;
  */
 public abstract class ServiceFactory {
 
-	private static final String SILENT_MODE = "jochor.servicefactory.silence";
+	public static final String SILENT_MODE = "jochor.servicefactory.silence";
 
 	private static boolean silence;
 
