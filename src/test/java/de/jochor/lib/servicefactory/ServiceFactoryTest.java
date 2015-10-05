@@ -18,7 +18,8 @@ public class ServiceFactoryTest {
 
 	@BeforeClass
 	public static void setUpBeforeClass() {
-		System.setProperty("jochor.servicefactory.silence", "true");
+		// Switch off outputs from the service factory
+		System.setProperty(ServiceFactory.SILENT_MODE, "true");
 	}
 
 	@Test
