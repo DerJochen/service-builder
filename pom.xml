@@ -4,7 +4,7 @@
 
 	<groupId>de.jochor.lib.servicefactory</groupId>
 	<artifactId>service-factory</artifactId>
-	<version>0.1.1-SNAPSHOT</version>
+	<version>0.1.1</version>
 	<!-- Type 0 -->
 
 	<parent>
