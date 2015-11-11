@@ -3,7 +3,9 @@ package de.jochor.lib.servicefactory;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -21,7 +23,9 @@ import java.util.LinkedHashSet;
  */
 public abstract class ServiceFactory {
 
-	public static final String SILENT_MODE = "jochor.servicefactory.silence";
+	public static final String PROPERTIES_BASE = "jochor.servicefactory.";
+
+	public static final String SILENT_MODE = PROPERTIES_BASE + "silence";
 
 	private static boolean silence;
 
@@ -35,11 +39,26 @@ public abstract class ServiceFactory {
 
 		LinkedHashSet<URL> possibleBinders = findPossibleBinders(serviceBinderName, classLoader);
 
-		reportMultipleBinders(possibleBinders);
-		try {
-			String fqClassName = toFqClassName(serviceBinderName);
+		String fqClassName = toFqClassName(serviceBinderName);
 
-			Class<?> serviceBinderClass = classLoader.loadClass(fqClassName);
+		String implName = null;
+		if (possibleBinders.size() > 1) {
+			String propertyName = PROPERTIES_BASE + fqClassName;
+			implName = System.getProperty(propertyName);
+		}
+
+		try {
+			Class<?> serviceBinderClass;
+			if (implName == null) {
+				reportMultipleBinders(possibleBinders);
+				serviceBinderClass = loadFirstBinder(fqClassName, classLoader);
+			} else {
+				serviceBinderClass = loadSpecificBinder(fqClassName,serviceBinderName, possibleBinders, implName);
+				if (serviceBinderClass == null) {
+					serviceBinderClass = loadFirstBinder(fqClassName, classLoader);
+				}
+			}
+
 			Method createMethod = serviceBinderClass.getMethod("create");
 
 			@SuppressWarnings("unchecked")
@@ -48,7 +67,7 @@ public abstract class ServiceFactory {
 			reportActuallyUsedBinder(possibleBinders);
 
 			return service;
-		} catch (ClassNotFoundException | NoSuchMethodException | SecurityException | InvocationTargetException | IllegalAccessException e) {
+		} catch (ClassNotFoundException | NoSuchMethodException | SecurityException | InvocationTargetException | IllegalAccessException | IllegalArgumentException | MalformedURLException e) {
 			throw new RuntimeException("Unable to load " + serviceBinderName + " implementation", e);
 		}
 	}
@@ -73,6 +92,33 @@ public abstract class ServiceFactory {
 		String fqClassName = serviceBinderName.substring(0, serviceBinderName.lastIndexOf('.'));
 		fqClassName = fqClassName.replace('/', '.');
 		return fqClassName;
+	}
+
+	protected static Class<?> loadFirstBinder(String fqClassName, ClassLoader classLoader) throws ClassNotFoundException {
+		Class<?> serviceBinderClass = classLoader.loadClass(fqClassName);
+		return serviceBinderClass;
+	}
+
+	private static Class<?> loadSpecificBinder(String fqClassName, String serviceBinderName, LinkedHashSet<URL> possibleBinders, String implName) throws ClassNotFoundException,
+			NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, MalformedURLException {
+		int charsToCut = serviceBinderName.length();
+		Iterator<URL> iter = possibleBinders.iterator();
+		while (iter.hasNext()) {
+			URL binderURL = iter.next();
+			
+			String urlString = binderURL.toString();
+			URL rootURL = new URL(urlString.substring(0,urlString.length() - charsToCut));
+			ClassLoader classLoader = new MyClassLoader(rootURL);
+			Class<?> binderClass = loadFirstBinder(fqClassName, classLoader);
+
+			Method getImplNameMethod = binderClass.getDeclaredMethod("getImplName");
+			String actualImplName = (String) getImplNameMethod.invoke(null);
+			if (implName.equals(actualImplName)) {
+				return binderClass;
+			}
+		}
+
+		return null;
 	}
 
 	private static void reportMultipleBinders(LinkedHashSet<URL> resourceSet) {
