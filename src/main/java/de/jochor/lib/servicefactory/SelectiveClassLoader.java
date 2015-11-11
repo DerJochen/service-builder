@@ -1,28 +1,27 @@
 package de.jochor.lib.servicefactory;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.net.URISyntaxException;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.Arrays;
 
-public  class MyClassLoader extends URLClassLoader {
-	
+public class SelectiveClassLoader extends ClassLoader {
+
 	private URL baseURL;
 
-	public MyClassLoader(URL baseURL) {
-		super(new URL[0]);
-		
+	public SelectiveClassLoader(URL baseURL) {
 		this.baseURL = baseURL;
+	}
+
+	public URL getBaseURL() {
+		return baseURL;
 	}
 
 	@Override
 	public Class<?> loadClass(String name) throws ClassNotFoundException {
 		Class<?> loadedClass = tryUnderBaseURL(name);
-		
-		if (loadedClass==null){
-			 loadedClass = super.loadClass(name);
+
+		if (loadedClass == null) {
+			loadedClass = super.loadClass(name);
 		}
 
 		return loadedClass;

@@ -5,7 +5,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -50,10 +49,10 @@ public abstract class ServiceFactory {
 		try {
 			Class<?> serviceBinderClass;
 			if (implName == null) {
-				reportMultipleBinders(possibleBinders);
+				reportMultipleBinders(possibleBinders, serviceBinderName);
 				serviceBinderClass = loadFirstBinder(fqClassName, classLoader);
 			} else {
-				serviceBinderClass = loadSpecificBinder(fqClassName,serviceBinderName, possibleBinders, implName);
+				serviceBinderClass = loadSpecificBinder(fqClassName, serviceBinderName, possibleBinders, implName);
 				if (serviceBinderClass == null) {
 					serviceBinderClass = loadFirstBinder(fqClassName, classLoader);
 				}
@@ -64,10 +63,11 @@ public abstract class ServiceFactory {
 			@SuppressWarnings("unchecked")
 			S service = (S) createMethod.invoke(null);
 
-			reportActuallyUsedBinder(possibleBinders);
+			reportActuallyUsedBinder(possibleBinders, serviceBinderName, serviceBinderClass);
 
 			return service;
-		} catch (ClassNotFoundException | NoSuchMethodException | SecurityException | InvocationTargetException | IllegalAccessException | IllegalArgumentException | MalformedURLException e) {
+		} catch (ClassNotFoundException | NoSuchMethodException | SecurityException | InvocationTargetException | IllegalAccessException
+				| IllegalArgumentException | MalformedURLException e) {
 			throw new RuntimeException("Unable to load " + serviceBinderName + " implementation", e);
 		}
 	}
@@ -99,16 +99,16 @@ public abstract class ServiceFactory {
 		return serviceBinderClass;
 	}
 
-	private static Class<?> loadSpecificBinder(String fqClassName, String serviceBinderName, LinkedHashSet<URL> possibleBinders, String implName) throws ClassNotFoundException,
-			NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, MalformedURLException {
-		int charsToCut = serviceBinderName.length();
+	private static Class<?> loadSpecificBinder(String fqClassName, String serviceBinderName, LinkedHashSet<URL> possibleBinders, String implName)
+			throws ClassNotFoundException, NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException,
+			InvocationTargetException, MalformedURLException {
 		Iterator<URL> iter = possibleBinders.iterator();
 		while (iter.hasNext()) {
 			URL binderURL = iter.next();
-			
-			String urlString = binderURL.toString();
-			URL rootURL = new URL(urlString.substring(0,urlString.length() - charsToCut));
-			ClassLoader classLoader = new MyClassLoader(rootURL);
+
+			String baseURLString = getBaseURLString(serviceBinderName, binderURL);
+			URL rootURL = new URL(baseURLString);
+			ClassLoader classLoader = new SelectiveClassLoader(rootURL);
 			Class<?> binderClass = loadFirstBinder(fqClassName, classLoader);
 
 			Method getImplNameMethod = binderClass.getDeclaredMethod("getImplName");
@@ -121,22 +121,38 @@ public abstract class ServiceFactory {
 		return null;
 	}
 
-	private static void reportMultipleBinders(LinkedHashSet<URL> resourceSet) {
+	private static String getBaseURLString(String serviceBinderName, URL binderURL) {
+		String urlString = binderURL.toString();
+		String baseURLString = urlString.substring(0, urlString.length() - serviceBinderName.length());
+		return baseURLString;
+	}
+
+	private static void reportMultipleBinders(LinkedHashSet<URL> resourceSet, String serviceBinderName) {
 		if (resourceSet.size() <= 1) {
 			return;
 		}
 
-		syso("Multiple static binders found:");
+		syso("Multiple static binder sources found:");
 		Iterator<URL> iter = resourceSet.iterator();
 		while (iter.hasNext()) {
 			URL url = iter.next();
-			syso(url.toString());
+			String baseURLString = getBaseURLString(serviceBinderName, url);
+			syso(baseURLString);
 		}
 	}
 
-	private static void reportActuallyUsedBinder(LinkedHashSet<URL> possibleBinders) {
-		URL url = possibleBinders.iterator().next();
-		syso("Used static binder: " + url.toString());
+	private static void reportActuallyUsedBinder(LinkedHashSet<URL> possibleBinders, String serviceBinderName, Class<?> serviceBinderClass) {
+		ClassLoader classLoader = serviceBinderClass.getClassLoader();
+		String baseURLString;
+
+		if (classLoader instanceof SelectiveClassLoader) {
+			baseURLString = ((SelectiveClassLoader) classLoader).getBaseURL().toString();
+		} else {
+			URL url = possibleBinders.iterator().next();
+			baseURLString = getBaseURLString(serviceBinderName, url);
+		}
+
+		syso("Used static binder '" + serviceBinderClass.getName() + "' from: " + baseURLString);
 	}
 
 	private static void syso(String message) {
