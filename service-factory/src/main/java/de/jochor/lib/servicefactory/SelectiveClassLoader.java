@@ -29,7 +29,8 @@ public class SelectiveClassLoader extends ClassLoader {
 
 	private Class<?> tryUnderBaseURL(String name) {
 		String resName = name.replace('.', '/').concat(".class");
-		try (InputStream resourceStream = baseURL.toURI().resolve(resName).toURL().openStream()) {
+
+		try (InputStream resourceStream = new URL(baseURL, resName).openStream()) {
 			if (resourceStream != null) {
 				int off = 0;
 				int len = 1024;

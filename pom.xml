@@ -17,6 +17,8 @@
 
 	<modules>
 		<module>service-factory</module>
+		
+		<module>multi-resource-test</module>
 	</modules>
 
 	<properties>
