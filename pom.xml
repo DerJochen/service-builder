@@ -3,8 +3,9 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>de.jochor.lib.servicefactory</groupId>
-	<artifactId>service-factory</artifactId>
+	<artifactId>service-factory-pom</artifactId>
 	<version>0.2.0-SNAPSHOT</version>
+	<packaging>pom</packaging>
 	<!-- Type 0 -->
 
 	<parent>
@@ -14,22 +15,14 @@
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 
+	<modules>
+		<module>service-factory</module>
+	</modules>
+
 	<properties>
 		<version.junit>4.12</version.junit>
 	</properties>
-
-	<dependencies>
-		<!-- No compile time Dependencies -->
-
-		<!-- Test Dependencies -->
-
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<!-- Type 0 -->
-		</dependency>
-	</dependencies>
-
+	
 	<dependencyManagement>
 		<dependencies>
 			<!-- No compile time Dependencies -->
