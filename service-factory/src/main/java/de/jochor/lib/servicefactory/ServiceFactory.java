@@ -123,15 +123,7 @@ public abstract class ServiceFactory {
 
 	private static String getBaseURLString(String serviceBinderName, URL binderURL) {
 		String urlString = binderURL.toString();
-//		String[] parts = urlString.split("!");
-
-		String baseURLString;
-//		if (parts.length == 1) {
-			baseURLString = urlString.substring(0, urlString.length() - serviceBinderName.length());
-//		} else {
-//			baseURLString = parts[0];
-//		}
-
+		String baseURLString = urlString.substring(0, urlString.length() - serviceBinderName.length());
 		return baseURLString;
 	}
 

@@ -4,6 +4,17 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.Arrays;
 
+/**
+ * {@link ClassLoader} that primarily tries to load a class from a specific URL. Only if this fails, it uses the normal
+ * {@link ClassLoader} hierarchy.
+ *
+ * <p>
+ * <b>Started:</b> 2015-11-11
+ * </p>
+ *
+ * @author jochen.hormes
+ *
+ */
 public class SelectiveClassLoader extends ClassLoader {
 
 	private URL baseURL;
