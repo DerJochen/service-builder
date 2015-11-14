@@ -100,8 +100,7 @@ public abstract class ServiceFactory {
 	}
 
 	private static Class<?> loadSpecificBinder(String fqClassName, String serviceBinderName, LinkedHashSet<URL> possibleBinders, String implName)
-			throws ClassNotFoundException, NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException,
-			InvocationTargetException, MalformedURLException {
+			throws ClassNotFoundException, MalformedURLException {
 		Iterator<URL> iter = possibleBinders.iterator();
 		while (iter.hasNext()) {
 			URL binderURL = iter.next();
@@ -111,10 +110,14 @@ public abstract class ServiceFactory {
 			ClassLoader classLoader = new SelectiveClassLoader(rootURL);
 			Class<?> binderClass = loadFirstBinder(fqClassName, classLoader);
 
-			Method getImplNameMethod = binderClass.getDeclaredMethod("getImplName");
-			String actualImplName = (String) getImplNameMethod.invoke(null);
-			if (implName.equals(actualImplName)) {
-				return binderClass;
+			try {
+				Method getImplNameMethod = binderClass.getDeclaredMethod("getImplName");
+				String actualImplName = (String) getImplNameMethod.invoke(null);
+				if (implName.equals(actualImplName)) {
+					return binderClass;
+				}
+			} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+				return null;
 			}
 		}
 
