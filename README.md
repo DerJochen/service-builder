@@ -9,7 +9,7 @@ Base project for the different service abstraction layer projects.
 <dependency>
     <groupId>de.jochor.lib.servicefactory</groupId>
     <artifactId>service-factory</artifactId>
-    <version>0.1.0</version>
+    <version>0.2.0</version>
 </dependency>
 ```
 
