@@ -3,6 +3,7 @@ package de.jochor.lib.servicefactory;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.HashSet;
 
 /**
  * {@link ClassLoader} that primarily tries to load a class from a specific URL. Only if this fails, it uses the normal
@@ -17,10 +18,13 @@ import java.util.Arrays;
  */
 public class SelectiveClassLoader extends ClassLoader {
 
-	private URL baseURL;
+	private final URL baseURL;
 
-	public SelectiveClassLoader(URL baseURL) {
+	private final HashSet<String> selected = new HashSet<>();
+
+	public SelectiveClassLoader(URL baseURL, String selected) {
 		this.baseURL = baseURL;
+		this.selected.add(selected);
 	}
 
 	public URL getBaseURL() {
@@ -29,8 +33,11 @@ public class SelectiveClassLoader extends ClassLoader {
 
 	@Override
 	public Class<?> loadClass(String name) throws ClassNotFoundException {
-		Class<?> loadedClass = tryUnderBaseURL(name);
+		Class<?> loadedClass = null;
 
+		if (selected.contains(name)) {
+			loadedClass = tryUnderBaseURL(name);
+		}
 		if (loadedClass == null) {
 			loadedClass = super.loadClass(name);
 		}

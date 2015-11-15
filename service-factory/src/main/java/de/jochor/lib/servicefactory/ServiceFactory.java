@@ -107,11 +107,11 @@ public abstract class ServiceFactory {
 
 			String baseURLString = getBaseURLString(serviceBinderName, binderURL);
 			URL rootURL = new URL(baseURLString);
-			ClassLoader classLoader = new SelectiveClassLoader(rootURL);
+			ClassLoader classLoader = new SelectiveClassLoader(rootURL, fqClassName);
 			Class<?> binderClass = loadFirstBinder(fqClassName, classLoader);
 
 			try {
-				Method getImplNameMethod = binderClass.getDeclaredMethod("getImplName");
+				Method getImplNameMethod = binderClass.getMethod("getImplName");
 				String actualImplName = (String) getImplNameMethod.invoke(null);
 				if (implName.equals(actualImplName)) {
 					return binderClass;

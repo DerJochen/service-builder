@@ -13,7 +13,7 @@ import de.jochor.test.TestService;
 import de.jochor.test2.TestService2;
 
 /**
- * Test for the behaviour of the {@link ServiceFactory} when finding the same static binder in multiple sources.
+ * Test for the behavior of the {@link ServiceFactory} when finding the same static binder in multiple sources.
  *
  * <p>
  * <b>Started:</b> 2015-11-12
@@ -66,7 +66,7 @@ public class MultiResourceTest {
 
 		Object service = ServiceFactory.create(BINDER_NAME);
 		Assert.assertNotNull(service);
-		Assert.assertEquals(TestService.class.getName(), service.getClass().getName());
+		Assert.assertTrue(service instanceof TestService);
 	}
 
 	@Test
@@ -75,7 +75,7 @@ public class MultiResourceTest {
 
 		Object service = ServiceFactory.create(BINDER_NAME);
 		Assert.assertNotNull(service);
-		Assert.assertEquals(TestService2.class.getName(), service.getClass().getName());
+		Assert.assertTrue(service instanceof TestService2);
 	}
 
 }
