@@ -70,7 +70,7 @@ public class SelectiveClassLoader extends ClassLoader {
 			}
 
 			return null;
-		} catch (Throwable e) {
+		} catch (Exception e) {
 			return null;
 		}
 	}

@@ -1,7 +1,7 @@
 package de.jochor.lib.servicefactory;
 
 import java.io.File;
-import java.net.URL;
+import java.net.URI;
 import java.util.LinkedHashSet;
 
 import org.junit.Assert;
@@ -26,13 +26,13 @@ public class ServiceFactoryTest {
 	public void testFindPossibleBinders() throws Throwable {
 		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 
-		LinkedHashSet<URL> possibleBinders = ServiceFactory.findPossibleBinders(BINDER_NAME, classLoader);
+		LinkedHashSet<URI> possibleBinders = ServiceFactory.findPossibleBinders(BINDER_NAME, classLoader);
 		Assert.assertNotNull(possibleBinders);
 		Assert.assertEquals(1, possibleBinders.size());
 
-		URL url = possibleBinders.iterator().next();
-		Assert.assertNotNull(url);
-		Assert.assertEquals(BINDER_FILE.toURI().toURL(), url);
+		URI uri = possibleBinders.iterator().next();
+		Assert.assertNotNull(uri);
+		Assert.assertEquals(BINDER_FILE.toURI(), uri);
 	}
 
 	@Test

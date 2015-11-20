@@ -1,6 +1,7 @@
 package de.jochor.lib.servicefactory;
 
 import java.io.File;
+import java.net.URI;
 import java.net.URL;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -38,19 +39,19 @@ public class MultiResourceTest {
 	public void testFindPossibleBinders() throws Throwable {
 		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 
-		LinkedHashSet<URL> possibleBinders = ServiceFactory.findPossibleBinders(BINDER_NAME, classLoader);
+		LinkedHashSet<URI> possibleBinders = ServiceFactory.findPossibleBinders(BINDER_NAME, classLoader);
 		Assert.assertNotNull(possibleBinders);
 		Assert.assertEquals(2, possibleBinders.size());
 
-		Iterator<URL> iter = possibleBinders.iterator();
-		URL url = iter.next();
-		Assert.assertNotNull(url);
-		Assert.assertEquals(BINDER_FILE.toURI().toURL(), url);
+		Iterator<URI> iter = possibleBinders.iterator();
+		URI uri = iter.next();
+		Assert.assertNotNull(uri);
+		Assert.assertEquals(BINDER_FILE.toURI(), uri);
 
-		url = iter.next();
-		Assert.assertNotNull(url);
-		Assert.assertTrue(url.toString().endsWith(BINDER_NAME));
-		Assert.assertNotEquals(BINDER_FILE.toURI().toURL(), url);
+		uri = iter.next();
+		Assert.assertNotNull(uri);
+		Assert.assertTrue(uri.toString().endsWith(BINDER_NAME));
+		Assert.assertNotEquals(BINDER_FILE.toURI(), uri);
 	}
 
 	@Test
