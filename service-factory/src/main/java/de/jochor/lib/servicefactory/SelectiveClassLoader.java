@@ -5,6 +5,8 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.HashSet;
 
+import lombok.Getter;
+
 /**
  * {@link ClassLoader} that primarily tries to load a class from a specific URL. Only if this fails, it uses the normal
  * {@link ClassLoader} hierarchy.
@@ -18,19 +20,28 @@ import java.util.HashSet;
  */
 public class SelectiveClassLoader extends ClassLoader {
 
+	@Getter
 	private final URL baseURL;
 
 	private final HashSet<String> selected = new HashSet<>();
 
+	/**
+	 * Creates a {@link SelectiveClassLoader} for a base {@link URL} and exactly one class to be loaded from there.
+	 * Every other class will be loaded via the normal {@link ClassLoader}.
+	 *
+	 * @param baseURL
+	 *            Alternative class source
+	 * @param selected
+	 *            Class to be loaded from there
+	 */
 	public SelectiveClassLoader(URL baseURL, String selected) {
 		this.baseURL = baseURL;
 		this.selected.add(selected);
 	}
 
-	public URL getBaseURL() {
-		return baseURL;
-	}
-
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Class<?> loadClass(String name) throws ClassNotFoundException {
 		Class<?> loadedClass = null;

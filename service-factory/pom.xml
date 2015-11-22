@@ -12,9 +12,18 @@
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
-	<dependencies>
+	<properties>
+		<version.lombok>1.16.4</version.lombok>
+	</properties>
 
-		<!-- No compile time Dependencies -->
+	<dependencies>
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>${version.lombok}</version>
+			<!-- Type 0 -->
+			<scope>provided</scope>
+		</dependency>
 
 		<!-- Test Dependencies -->
 
