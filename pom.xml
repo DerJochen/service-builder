@@ -17,14 +17,14 @@
 
 	<modules>
 		<module>service-factory</module>
-		
+
 		<module>multi-resource-test</module>
 	</modules>
 
 	<properties>
 		<version.junit>4.12</version.junit>
 	</properties>
-	
+
 	<dependencyManagement>
 		<dependencies>
 			<!-- No compile time Dependencies -->
@@ -64,6 +64,26 @@
 						<id>attach-javadocs</id>
 						<goals>
 							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>0.7.5.201505241946</version>
+				<executions>
+					<execution>
+						<id>default-prepare-agent</id>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>default-report</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>report</goal>
 						</goals>
 					</execution>
 				</executions>
