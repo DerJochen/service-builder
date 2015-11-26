@@ -17,12 +17,12 @@
 
 	<modules>
 		<module>service-factory</module>
-
 		<module>multi-resource-test</module>
 	</modules>
 
 	<properties>
 		<version.junit>4.12</version.junit>
+		<version.jacoco>0.7.5.201505241946</version.jacoco>
 	</properties>
 
 	<dependencyManagement>
@@ -71,7 +71,7 @@
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>0.7.5.201505241946</version>
+				<version>${version.jacoco}</version>
 				<executions>
 					<execution>
 						<id>default-prepare-agent</id>

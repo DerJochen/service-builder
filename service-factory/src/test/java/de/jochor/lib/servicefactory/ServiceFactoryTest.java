@@ -42,4 +42,9 @@ public class ServiceFactoryTest {
 		Assert.assertTrue(service instanceof TestService);
 	}
 
+	@Test(expected = ServiceFactoryException.class)
+	public void testCreate_missingBinder() throws Throwable {
+		ServiceFactory.create("non/existing/Binder.class");
+	}
+
 }

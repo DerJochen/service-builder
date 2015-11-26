@@ -9,5 +9,5 @@ package de.jochor.test2;
 * @author Jochen Hormes
 *
 */
-public class TestService2 {
+public class TestMultiService2 {
 }

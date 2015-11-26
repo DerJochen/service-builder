@@ -2,7 +2,6 @@ package de.jochor.lib.servicefactory;
 
 import java.io.File;
 import java.net.URI;
-import java.net.URL;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 
@@ -10,8 +9,8 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import de.jochor.test.TestService;
-import de.jochor.test2.TestService2;
+import de.jochor.test.TestMultiService;
+import de.jochor.test2.TestMultiService2;
 
 /**
  * Test for the behavior of the {@link ServiceFactory} when finding the same static binder in multiple sources.
@@ -25,7 +24,7 @@ import de.jochor.test2.TestService2;
  */
 public class MultiResourceTest {
 
-	private static final String BINDER_NAME = "de/jochor/test/TestServiceBinder.class";
+	private static final String BINDER_NAME = "de/jochor/test/TestMultiServiceBinder.class";
 
 	private static final File BINDER_FILE = new File("target/test-classes", BINDER_NAME);
 
@@ -58,25 +57,34 @@ public class MultiResourceTest {
 	public void testCreate_default() throws Throwable {
 		Object service = ServiceFactory.create(BINDER_NAME);
 		Assert.assertNotNull(service);
-		Assert.assertTrue(service instanceof TestService2);
+		Assert.assertTrue(service instanceof TestMultiService);
 	}
 
 	@Test
 	public void testCreate_service1() throws Throwable {
-		System.setProperty("jochor.servicefactory.de.jochor.test.TestServiceBinder", "de.jochor.test.TestService");
+		System.setProperty("jochor.servicefactory.de.jochor.test.TestMultiServiceBinder", "de.jochor.test.TestMultiService");
 
 		Object service = ServiceFactory.create(BINDER_NAME);
 		Assert.assertNotNull(service);
-		Assert.assertTrue(service instanceof TestService);
+		Assert.assertTrue(service instanceof TestMultiService);
 	}
 
 	@Test
 	public void testCreate_service2() throws Throwable {
-		System.setProperty("jochor.servicefactory.de.jochor.test.TestServiceBinder", "de.jochor.test2.TestService2");
+		System.setProperty("jochor.servicefactory.de.jochor.test.TestMultiServiceBinder", "de.jochor.test2.TestMultiService2");
 
 		Object service = ServiceFactory.create(BINDER_NAME);
 		Assert.assertNotNull(service);
-		Assert.assertTrue(service instanceof TestService2);
+		Assert.assertTrue(service instanceof TestMultiService2);
+	}
+
+	@Test
+	public void testCreate_serviceNotFound() throws Throwable {
+		System.setProperty("jochor.servicefactory.de.jochor.test.TestMultiServiceBinder", "de.jochor.test2.TestMultiService3");
+
+		Object service = ServiceFactory.create(BINDER_NAME);
+		Assert.assertNotNull(service);
+		Assert.assertTrue(service instanceof TestMultiService);
 	}
 
 }
