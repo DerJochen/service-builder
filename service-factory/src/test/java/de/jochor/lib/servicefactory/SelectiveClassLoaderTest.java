@@ -58,6 +58,17 @@ public class SelectiveClassLoaderTest {
 		Assert.assertNotSame(ServiceFactory.class, loadedClass);
 	}
 
+	@Test(expected = ClassNotFoundException.class)
+	public void testLoadClass_notThere() throws Exception {
+		URL baseURL2 = Paths.get("target/classes").toAbsolutePath().toUri().toURL();
+		SelectiveClassLoader classLoader = new SelectiveClassLoader(baseURL2, "NotThere");
+
+		Class<?> loadedClass = classLoader.loadClass("NotThere");
+
+		Assert.assertEquals(ServiceFactory.class.getName(), loadedClass.getName());
+		Assert.assertNotSame(ServiceFactory.class, loadedClass);
+	}
+
 	// A bit useless, but it covers more code paths in the generated try-with-resource code
 	@Test(expected = ClassFormatError.class)
 	public void testLoadClass_notAClass() throws ClassFormatError, ClassNotFoundException {
