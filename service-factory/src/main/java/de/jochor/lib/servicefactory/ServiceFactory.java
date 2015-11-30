@@ -35,7 +35,7 @@ public abstract class ServiceFactory {
 		silence = Boolean.parseBoolean(silenceString);
 	}
 
-	private ServiceFactory() {
+	protected ServiceFactory() {
 		// Intended blank
 	}
 
