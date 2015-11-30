@@ -4,7 +4,7 @@
 
 	<groupId>de.jochor.lib.servicefactory</groupId>
 	<artifactId>service-factory-pom</artifactId>
-	<version>0.2.3</version>
+	<version>0.2.4-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<!-- Type 0 -->
 
