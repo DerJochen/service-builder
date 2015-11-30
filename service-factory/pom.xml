@@ -8,7 +8,7 @@
 	<parent>
 		<groupId>de.jochor.lib.servicefactory</groupId>
 		<artifactId>service-factory-pom</artifactId>
-		<version>0.2.3-SNAPSHOT</version>
+		<version>0.2.3</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
